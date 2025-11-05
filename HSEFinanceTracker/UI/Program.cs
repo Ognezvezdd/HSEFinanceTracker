@@ -13,8 +13,8 @@ var services = new ServiceCollection();
 
 // Repositories (InMemory)
 services.AddSingleton<IBankAccountRepo, InMemoryBankAccountRepo>();
-services.AddSingleton<ICategoryRepo,    InMemoryCategoryRepo>();
-services.AddSingleton<IOperationRepo,   InMemoryOperationRepo>();
+services.AddSingleton<ICategoryRepo, InMemoryCategoryRepo>();
+services.AddSingleton<IOperationRepo, InMemoryOperationRepo>();
 
 // Factory
 services.AddSingleton<IFinanceFactory, FinanceFactory>();

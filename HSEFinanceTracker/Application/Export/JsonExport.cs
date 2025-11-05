@@ -12,15 +12,14 @@ namespace HSEFinanceTracker.Application.Export
     {
         private readonly JsonSerializerOptions _opts = new()
         {
-            WriteIndented = true,
-            Converters = { new JsonStringEnumConverter() }
+            WriteIndented = true, Converters = { new JsonStringEnumConverter() }
         };
 
         public void Export(DataSnapshot data, string path)
         {
             var dto = new ExportDto
             {
-                Accounts   = data.Accounts.Select(a => new AccountDto(a.Id, a.Name, a.Balance)).ToList(),
+                Accounts = data.Accounts.Select(a => new AccountDto(a.Id, a.Name, a.Balance)).ToList(),
                 Categories = data.Categories.Select(c => new CategoryDto(c.Id, c.Type.ToString(), c.Name)).ToList(),
                 Operations = data.Operations.Select(o => new OperationDto(
                     o.Id, o.Type.ToString(), o.BankAccountId, o.CategoryId, o.Amount, o.Date, o.Description
@@ -33,15 +32,23 @@ namespace HSEFinanceTracker.Application.Export
 
         private sealed class ExportDto
         {
-            public List<AccountDto>   Accounts   { get; set; } = new();
-            public List<CategoryDto>  Categories { get; set; } = new();
+            public List<AccountDto> Accounts { get; set; } = new();
+            public List<CategoryDto> Categories { get; set; } = new();
             public List<OperationDto> Operations { get; set; } = new();
         }
 
         private sealed record AccountDto(Guid Id, string Name, decimal Balance);
+
         private sealed record CategoryDto(Guid Id, string Type, string Name);
-        private sealed record OperationDto(Guid Id, string Type, Guid BankAccountId, Guid CategoryId,
-                                           decimal Amount, DateTime Date, string? Description);
+
+        private sealed record OperationDto(
+            Guid Id,
+            string Type,
+            Guid BankAccountId,
+            Guid CategoryId,
+            decimal Amount,
+            DateTime Date,
+            string? Description);
     }
 
     /// <summary>

@@ -20,7 +20,12 @@ namespace HSEFinanceTracker.Application.Import
         }
 
         protected abstract TParsed Parse(string raw);
-        protected virtual void Validate(TParsed parsed) { /* опционально */ }
+
+        protected virtual void Validate(TParsed parsed)
+        {
+            /* опционально */
+        }
+
         protected abstract void Persist(TParsed parsed);
     }
 
