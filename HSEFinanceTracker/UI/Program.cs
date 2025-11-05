@@ -1,28 +1,38 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using HSEFinanceTracker.Application.Export;
+using HSEFinanceTracker.Application.Facades;
+using HSEFinanceTracker.Application.Import;
 using HSEFinanceTracker.Base.Factories;
 using HSEFinanceTracker.Base.Repositories;
 using HSEFinanceTracker.Infrastructure.Repositories;
-using HSEFinanceTracker.Application.Facades;
 using HSEFinanceTracker.UI;
+using Microsoft.Extensions.DependencyInjection;
 
-// DI-контейнер
+// ReSharper disable All
+
 var services = new ServiceCollection();
 
-// База (домен)
-services.AddSingleton<IFinanceFactory, FinanceFactory>();
+// Repositories (InMemory)
 services.AddSingleton<IBankAccountRepo, InMemoryBankAccountRepo>();
-services.AddSingleton<ICategoryRepo, InMemoryCategoryRepo>();
-services.AddSingleton<IOperationRepo, InMemoryOperationRepo>();
+services.AddSingleton<ICategoryRepo,    InMemoryCategoryRepo>();
+services.AddSingleton<IOperationRepo,   InMemoryOperationRepo>();
 
-// Фасады
+// Factory
+services.AddSingleton<IFinanceFactory, FinanceFactory>();
+
+// Facades
 services.AddSingleton<BankAccountFacade>();
 services.AddSingleton<CategoryFacade>();
 services.AddSingleton<OperationFacade>();
+services.AddSingleton<AnalyticsFacade>();
+services.AddSingleton<ImportExportFacade>();
+
+// Import/Export services
+services.AddSingleton<IDataExporter, JsonExport>(); // по умолчанию JSON
+services.AddSingleton<IDataImporter, JsonImport>(); // по умолчанию JSON-импорт
 
 // UI
 services.AddSingleton<MainMenu>();
 
-// Сборка и запуск
 var provider = services.BuildServiceProvider();
 var menu = provider.GetRequiredService<MainMenu>();
 menu.Run();
