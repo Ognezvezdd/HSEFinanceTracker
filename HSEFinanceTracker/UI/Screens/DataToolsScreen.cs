@@ -64,6 +64,7 @@ namespace HSEFinanceTracker.UI.Screens
                         _io.Info("Готово");
                         break;
                 }
+
                 _io.ReadKey();
             }
         }

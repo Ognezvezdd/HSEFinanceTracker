@@ -30,11 +30,12 @@ namespace HSEFinanceTracker.Application.Export
             File.WriteAllText(path, json);
         }
 
+        // TODO: Убрать это безобразие
         private sealed class ExportDto
         {
-            public List<AccountDto> Accounts { get; set; } = new();
-            public List<CategoryDto> Categories { get; set; } = new();
-            public List<OperationDto> Operations { get; set; } = new();
+            public List<AccountDto> Accounts { get; set; } = [];
+            public List<CategoryDto> Categories { get; set; } = [];
+            public List<OperationDto> Operations { get; set; } = [];
         }
 
         private sealed record AccountDto(Guid Id, string Name, decimal Balance);
@@ -49,13 +50,5 @@ namespace HSEFinanceTracker.Application.Export
             decimal Amount,
             DateTime Date,
             string? Description);
-    }
-
-    /// <summary>
-    /// Контракт экспортёра (можно сделать ещё CsvExport, YamlExport).
-    /// </summary>
-    public interface IDataExporter
-    {
-        void Export(DataSnapshot data, string path);
     }
 }

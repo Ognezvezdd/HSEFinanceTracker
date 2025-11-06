@@ -43,7 +43,7 @@ namespace HSEFinanceTracker.UI
                 var choice = _io.Choose("Главное меню",
                 [
                     _accounts.Title, _categories.Title, _operations.Title, _reports.Title, _importExport.Title,
-                        _dataTools.Title, "Выход"
+                    _dataTools.Title, "Выход"
                 ]);
 
                 if (choice == "Выход")

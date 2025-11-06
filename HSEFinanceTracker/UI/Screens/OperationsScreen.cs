@@ -48,6 +48,7 @@ namespace HSEFinanceTracker.UI.Screens
                     case "Удалить": Delete(); break;
                     case "Изменить (delete+create)": Edit(); break;
                 }
+
                 _io.ReadKey();
             }
         }

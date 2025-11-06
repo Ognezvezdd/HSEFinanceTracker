@@ -36,6 +36,7 @@ namespace HSEFinanceTracker.UI.Screens
                     case "Разница (доходы - расходы) за период": Diff(); break;
                     case "Группировка по категориям": Group(); break;
                 }
+
                 _io.ReadKey();
             }
         }
