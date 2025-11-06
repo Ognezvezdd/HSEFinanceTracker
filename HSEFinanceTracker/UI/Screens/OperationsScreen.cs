@@ -114,6 +114,7 @@ namespace HSEFinanceTracker.UI.Screens
             var (acc, op) = PickOperationWithAccount();
             if (acc is null || op is null)
             {
+                _io.Warn("Операций или счетов нет");
                 return;
             }
 
@@ -131,6 +132,7 @@ namespace HSEFinanceTracker.UI.Screens
             var (acc, op) = PickOperationWithAccount();
             if (acc is null || op is null)
             {
+                _io.Warn("Операций или счетов нет");
                 return;
             }
 
