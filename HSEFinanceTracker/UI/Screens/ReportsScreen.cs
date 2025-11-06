@@ -11,13 +11,11 @@ namespace HSEFinanceTracker.UI.Screens
         public string Title => "Отчёты";
 
         private readonly AnalyticsFacade _analytics;
-        private readonly TimedScenario _timed;
         private readonly UiIo _io;
 
-        public ReportsScreen(AnalyticsFacade analytics, TimedScenario timed, UiIo io)
+        public ReportsScreen(AnalyticsFacade analytics, UiIo io)
         {
             _analytics = analytics;
-            _timed = timed;
             _io = io;
         }
 
@@ -33,14 +31,12 @@ namespace HSEFinanceTracker.UI.Screens
                     return;
                 }
 
-                _timed.Run(cmd, () =>
+                switch (cmd)
                 {
-                    switch (cmd)
-                    {
-                        case "Разница (доходы - расходы) за период": Diff(); break;
-                        case "Группировка по категориям": Group(); break;
-                    }
-                });
+                    case "Разница (доходы - расходы) за период": Diff(); break;
+                    case "Группировка по категориям": Group(); break;
+                }
+                _io.ReadKey();
             }
         }
 
@@ -52,7 +48,7 @@ namespace HSEFinanceTracker.UI.Screens
             t.AddRow("Доходы", income.ToString("0.##"));
             t.AddRow("Расходы", expense.ToString("0.##"));
             t.AddRow("Разница", diff.ToString("0.##"));
-            Spectre.Console.AnsiConsole.Write(t);
+            _io.WriteTable(t);
         }
 
         private void Group()
@@ -78,7 +74,7 @@ namespace HSEFinanceTracker.UI.Screens
                 t.AddRow(name, sum.ToString("0.##"));
             }
 
-            Spectre.Console.AnsiConsole.Write(t);
+            _io.WriteTable(t);
         }
     }
 }

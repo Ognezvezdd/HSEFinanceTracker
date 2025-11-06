@@ -11,13 +11,11 @@ namespace HSEFinanceTracker.UI.Screens
         public string Title => "Категории";
 
         private readonly CategoryFacade _categories;
-        private readonly TimedScenario _timed;
         private readonly UiIo _io;
 
-        public CategoriesScreen(CategoryFacade categories, TimedScenario timed, UiIo io)
+        public CategoriesScreen(CategoryFacade categories, UiIo io)
         {
             _categories = categories;
-            _timed = timed;
             _io = io;
         }
 
@@ -32,16 +30,15 @@ namespace HSEFinanceTracker.UI.Screens
                     return;
                 }
 
-                _timed.Run(cmd, () =>
+
+                switch (cmd)
                 {
-                    switch (cmd)
-                    {
-                        case "Создать": Create(); break;
-                        case "Список": List(); break;
-                        case "Переименовать": Rename(); break;
-                        case "Удалить": Delete(); break;
-                    }
-                });
+                    case "Создать": Create(); break;
+                    case "Список": List(); break;
+                    case "Переименовать": Rename(); break;
+                    case "Удалить": Delete(); break;
+                }
+                _io.ReadKey();
             }
         }
 
@@ -77,7 +74,7 @@ namespace HSEFinanceTracker.UI.Screens
                 t.AddRow(c.Id.ToString(), c.Name, c.Type.ToString());
             }
 
-            Spectre.Console.AnsiConsole.Write(t);
+            _io.WriteTable(t);
         }
 
         private void Rename()

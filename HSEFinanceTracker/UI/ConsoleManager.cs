@@ -29,9 +29,9 @@ namespace HSEFinanceTracker.UI
         /// Выводит информационное сообщение в консоль зелёным цветом.
         /// </summary>
         /// <param name="message">Сообщение, которое будет выведено.</param>
-        public static void WriteMessage(string message)
+        public static void WriteMessage(object message)
         {
-            AnsiConsole.Markup($"[green]{message}[/]\n");
+            AnsiConsole.Markup($"[green]{message.ToString()}[/]\n");
         }
 
         /// <summary>

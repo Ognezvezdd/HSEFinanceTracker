@@ -15,6 +15,11 @@ namespace HSEFinanceTracker.UI.Services
             ConsoleManager.WriteMessage(msg);
         }
 
+        public void ReadKey()
+        {
+            Console.ReadKey();
+        }
+
         public void Warn(string msg)
         {
             ConsoleManager.WriteWarn(msg, false);
@@ -107,6 +112,11 @@ namespace HSEFinanceTracker.UI.Services
             }
 
             return t;
+        }
+
+        public void WriteTable(TTable table)
+        {
+            AnsiConsole.Console.Write(table);
         }
     }
 }

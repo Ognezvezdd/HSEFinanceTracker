@@ -41,11 +41,10 @@ namespace HSEFinanceTracker.UI
             {
                 _io.Clear();
                 var choice = _io.Choose("Главное меню",
-                    new[]
-                    {
-                        _accounts.Title, _categories.Title, _operations.Title, _reports.Title, _importExport.Title,
+                [
+                    _accounts.Title, _categories.Title, _operations.Title, _reports.Title, _importExport.Title,
                         _dataTools.Title, "Выход"
-                    });
+                ]);
 
                 if (choice == "Выход")
                 {

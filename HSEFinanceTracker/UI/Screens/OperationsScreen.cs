@@ -14,16 +14,13 @@ namespace HSEFinanceTracker.UI.Screens
         private readonly OperationFacade _ops;
         private readonly BankAccountFacade _accounts;
         private readonly CategoryFacade _categories;
-        private readonly TimedScenario _timed;
         private readonly UiIo _io;
 
-        public OperationsScreen(OperationFacade ops, BankAccountFacade accounts, CategoryFacade categories,
-            TimedScenario timed, UiIo io)
+        public OperationsScreen(OperationFacade ops, BankAccountFacade accounts, CategoryFacade categories, UiIo io)
         {
             _ops = ops;
             _accounts = accounts;
             _categories = categories;
-            _timed = timed;
             _io = io;
         }
 
@@ -33,28 +30,25 @@ namespace HSEFinanceTracker.UI.Screens
             {
                 _io.Clear();
                 var cmd = _io.Choose(Title,
-                    new[]
-                    {
-                        "Добавить доход", "Добавить расход", "Показать по счёту за период",
-                        "Показать все по счёту (без дат)", "Удалить", "Изменить (delete+create)", "Назад"
-                    });
+                [
+                    "Добавить доход", "Добавить расход", "Показать по счёту за период",
+                    "Показать все по счёту (без дат)", "Удалить", "Изменить (delete+create)", "Назад"
+                ]);
                 if (cmd == "Назад")
                 {
                     return;
                 }
 
-                _timed.Run(cmd, () =>
+                switch (cmd)
                 {
-                    switch (cmd)
-                    {
-                        case "Добавить доход": Create(OperationType.Income); break;
-                        case "Добавить расход": Create(OperationType.Expense); break;
-                        case "Показать по счёту за период": ShowByAccount(true); break;
-                        case "Показать все по счёту (без дат)": ShowByAccount(false); break;
-                        case "Удалить": Delete(); break;
-                        case "Изменить (delete+create)": Edit(); break;
-                    }
-                });
+                    case "Добавить доход": Create(OperationType.Income); break;
+                    case "Добавить расход": Create(OperationType.Expense); break;
+                    case "Показать по счёту за период": ShowByAccount(true); break;
+                    case "Показать все по счёту (без дат)": ShowByAccount(false); break;
+                    case "Удалить": Delete(); break;
+                    case "Изменить (delete+create)": Edit(); break;
+                }
+                _io.ReadKey();
             }
         }
 
@@ -112,7 +106,7 @@ namespace HSEFinanceTracker.UI.Screens
                     o.Amount.ToString("0.##"), name, o.Description ?? "");
             }
 
-            Spectre.Console.AnsiConsole.Write(t);
+            _io.WriteTable(t);
         }
 
         private void Delete()

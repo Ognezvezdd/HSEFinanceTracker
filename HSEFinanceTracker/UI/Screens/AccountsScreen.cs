@@ -10,13 +10,11 @@ namespace HSEFinanceTracker.UI.Screens
         public string Title => "Счета";
 
         private readonly BankAccountFacade _accounts;
-        private readonly TimedScenario _timed;
         private readonly UiIo _io;
 
-        public AccountsScreen(BankAccountFacade accounts, TimedScenario timed, UiIo io)
+        public AccountsScreen(BankAccountFacade accounts, UiIo io)
         {
             _accounts = accounts;
-            _timed = timed;
             _io = io;
         }
 
@@ -31,16 +29,15 @@ namespace HSEFinanceTracker.UI.Screens
                     return;
                 }
 
-                _timed.Run(cmd, () =>
+                switch (cmd)
                 {
-                    switch (cmd)
-                    {
-                        case "Создать": Create(); break;
-                        case "Список": List(); break;
-                        case "Переименовать": Rename(); break;
-                        case "Удалить": Delete(); break;
-                    }
-                });
+                    case "Создать": Create(); break;
+                    case "Список": List(); break;
+                    case "Переименовать": Rename(); break;
+                    case "Удалить": Delete(); break;
+                }
+
+                _io.ReadKey();
             }
         }
 
@@ -67,7 +64,7 @@ namespace HSEFinanceTracker.UI.Screens
                 t.AddRow(a.Id.ToString(), a.Name, a.Balance.ToString("0.##"));
             }
 
-            Spectre.Console.AnsiConsole.Write(t);
+            _io.WriteTable(t);
         }
 
         private void Rename()

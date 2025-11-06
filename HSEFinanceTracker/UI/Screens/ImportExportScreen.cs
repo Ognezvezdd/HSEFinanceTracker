@@ -14,18 +14,15 @@ namespace HSEFinanceTracker.UI.Screens
         private readonly ImportExportFacade _ioFacade;
         private readonly IEnumerable<IDataExporter> _exporters;
         private readonly IEnumerable<IDataImporter> _importers;
-        private readonly TimedScenario _timed;
         private readonly UiIo _io;
 
         public ImportExportScreen(ImportExportFacade ioFacade,
             IEnumerable<IDataExporter> exporters,
-            IEnumerable<IDataImporter> importers,
-            TimedScenario timed, UiIo io)
+            IEnumerable<IDataImporter> importers, UiIo io)
         {
             _ioFacade = ioFacade;
             _exporters = exporters;
             _importers = importers;
-            _timed = timed;
             _io = io;
         }
 
@@ -45,18 +42,17 @@ namespace HSEFinanceTracker.UI.Screens
                     return;
                 }
 
-                _timed.Run(cmd, () =>
+                switch (cmd)
                 {
-                    switch (cmd)
-                    {
-                        case "Экспорт: JSON": Export("json"); break;
-                        case "Импорт: JSON": Import("json"); break;
-                        case "Экспорт: CSV": NotAvailable("CSV экспорт"); break;
-                        case "Экспорт: YAML": NotAvailable("YAML экспорт"); break;
-                        case "Импорт: CSV": NotAvailable("CSV импорт"); break;
-                        case "Импорт: YAML": NotAvailable("YAML импорт"); break;
-                    }
-                });
+                    case "Экспорт: JSON": Export("json"); break;
+                    case "Импорт: JSON": Import("json"); break;
+                    case "Экспорт: CSV": NotAvailable("CSV экспорт"); break;
+                    case "Экспорт: YAML": NotAvailable("YAML экспорт"); break;
+                    case "Импорт: CSV": NotAvailable("CSV импорт"); break;
+                    case "Импорт: YAML": NotAvailable("YAML импорт"); break;
+                }
+
+                _io.ReadKey();
             }
         }
 

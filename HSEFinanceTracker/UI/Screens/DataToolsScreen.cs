@@ -11,13 +11,11 @@ namespace HSEFinanceTracker.UI.Screens
 
         private readonly object? _recalcFacade; // RecalcFacade (если зарегистрирован)
         private readonly BankAccountFacade _accounts;
-        private readonly TimedScenario _timed;
         private readonly UiIo _io;
 
-        public DataToolsScreen(BankAccountFacade accounts, TimedScenario timed, UiIo io, object? recalcFacade = null)
+        public DataToolsScreen(BankAccountFacade accounts, UiIo io, object? recalcFacade = null)
         {
             _accounts = accounts;
-            _timed = timed;
             _io = io;
             _recalcFacade = recalcFacade;
         }
@@ -28,46 +26,45 @@ namespace HSEFinanceTracker.UI.Screens
             {
                 _io.Clear();
                 var cmd = _io.Choose(Title,
-                    new[] { "Проверить баланс счёта", "Пересчитать баланс счёта", "Пересчитать все счета", "Назад" });
+                    ["Проверить баланс счёта", "Пересчитать баланс счёта", "Пересчитать все счета", "Назад"]);
                 if (cmd == "Назад")
                 {
                     return;
                 }
 
-                _timed.Run(cmd, () =>
+
+                if (_recalcFacade == null)
                 {
-                    if (_recalcFacade == null)
-                    {
-                        _io.Warn("Модуль пересчёта не подключён.");
-                        return;
-                    }
+                    _io.Warn("Модуль пересчёта не подключён.");
+                    return;
+                }
 
-                    dynamic r = _recalcFacade;
+                dynamic r = _recalcFacade;
 
-                    switch (cmd)
-                    {
-                        case "Проверить баланс счёта":
-                            if (PickAccount() is { } acc1)
-                            {
-                                decimal diff = r.VerifyAccount(acc1.Id);
-                                _io.Info($"Расхождение: {diff:0.##}");
-                            }
+                switch (cmd)
+                {
+                    case "Проверить баланс счёта":
+                        if (PickAccount() is { } acc1)
+                        {
+                            decimal diff = r.VerifyAccount(acc1.Id);
+                            _io.Info($"Расхождение: {diff:0.##}");
+                        }
 
-                            break;
-                        case "Пересчитать баланс счёта":
-                            if (PickAccount() is { } acc2)
-                            {
-                                r.RecalculateAccount(acc2.Id);
-                                _io.Info("Готово");
-                            }
-
-                            break;
-                        case "Пересчитать все счета":
-                            r.RecalculateAll();
+                        break;
+                    case "Пересчитать баланс счёта":
+                        if (PickAccount() is { } acc2)
+                        {
+                            r.RecalculateAccount(acc2.Id);
                             _io.Info("Готово");
-                            break;
-                    }
-                });
+                        }
+
+                        break;
+                    case "Пересчитать все счета":
+                        r.RecalculateAll();
+                        _io.Info("Готово");
+                        break;
+                }
+                _io.ReadKey();
             }
         }
 
