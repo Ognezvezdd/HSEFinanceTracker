@@ -83,12 +83,12 @@ namespace HSEFinanceTracker.Application.Import
 
             foreach (var c in parsed.Categories)
             {
-                ParseCategoryTypeOrThrow(c.Type, $"Category Id={c.Id}, Name='{c.Name}'");
+                ParseCategoryTypeOrThrow(c.Type.ToString(), $"Category Id={c.Id}, Name='{c.Name}'");
             }
 
             foreach (var o in parsed.Operations)
             {
-                ParseOperationTypeOrThrow(o.Type, $"Operation Id={o.Id}");
+                ParseOperationTypeOrThrow(o.Type.ToString(), $"Operation Id={o.Id}");
 
                 if (!accountIds.Contains(o.BankAccountId))
                 {
@@ -139,7 +139,7 @@ namespace HSEFinanceTracker.Application.Import
                 .ToDictionary(c => c.Id, c => c);
             foreach (var c in parsed.Categories)
             {
-                var type = ParseCategoryTypeOrThrow(c.Type, $"Category Id={c.Id}, Name='{c.Name}'");
+                var type = ParseCategoryTypeOrThrow(c.Type.ToString(), $"Category Id={c.Id}, Name='{c.Name}'");
 
                 if (existingCatById.ContainsKey(c.Id))
                 {
@@ -175,7 +175,7 @@ namespace HSEFinanceTracker.Application.Import
 
             foreach (var c in parsed.Categories)
             {
-                var type = ParseCategoryTypeOrThrow(c.Type, $"Category Id={c.Id}, Name='{c.Name}'");
+                var type = ParseCategoryTypeOrThrow(c.Type.ToString(), $"Category Id={c.Id}, Name='{c.Name}'");
                 var created = _categories.Create(type, c.Name);
                 categoryIdMap[c.Id] = created.Id;
             }
@@ -184,7 +184,7 @@ namespace HSEFinanceTracker.Application.Import
 
             foreach (var o in parsed.Operations)
             {
-                var type = ParseOperationTypeOrThrow(o.Type, $"Operation Id={o.Id}");
+                var type = ParseOperationTypeOrThrow(o.Type.ToString(), $"Operation Id={o.Id}");
 
                 if (!accountIdMap.TryGetValue(o.BankAccountId, out var runtimeAccId))
                 {
@@ -248,27 +248,12 @@ namespace HSEFinanceTracker.Application.Import
 
         // ===== DTO =====
 
+        // TODO Проверитб что нет конфликтов
         public sealed class ImportDto
         {
-            public List<AccountDto> Accounts { get; set; } = new();
-            public List<CategoryDto> Categories { get; set; } = new();
-            public List<OperationDto> Operations { get; set; } = new();
+            public List<BankAccount> Accounts { get; init; } = [];
+            public List<Category> Categories { get; init; } = [];
+            public List<Operation> Operations { get; init; } = [];
         }
-
-        public sealed record AccountDto(Guid Id, string Name, decimal Balance);
-
-        public sealed record CategoryDto(Guid Id, string Type, string Name);
-
-        public sealed record OperationDto(
-            Guid Id,
-            string Type,
-            Guid BankAccountId,
-            Guid CategoryId,
-            decimal Amount,
-            DateTime Date,
-            string? Description,
-            string? BankAccountName = null,
-            string? CategoryName = null
-        );
     }
 }

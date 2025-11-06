@@ -8,11 +8,6 @@ namespace HSEFinanceTracker.Base.Entities
 
         public BankAccount(Guid id, string name, decimal balance = 0m)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException("Name required", nameof(name));
-            }
-
             Id = id;
             Name = name.Trim();
             Balance = balance;
