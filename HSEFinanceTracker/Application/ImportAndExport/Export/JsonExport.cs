@@ -8,14 +8,14 @@ namespace HSEFinanceTracker.Application.ImportAndExport.Export
     /// JSON-экспортёр.
     /// Делает один файл с массивами accounts/categories/operations.
     /// </summary>
-    public sealed class JsonExport : IDataExporter
+    public sealed class JsonExport : FileExportTemplate<ImportExportDto>
     {
         private readonly JsonSerializerOptions _opts = new()
         {
             WriteIndented = true, Converters = { new JsonStringEnumConverter() }
         };
 
-        public void Export(DataSnapshot data, string path)
+        protected override void Export(DataSnapshot data, string path)
         {
             var dto = new ImportExportDto
             {

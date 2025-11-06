@@ -7,6 +7,6 @@ namespace HSEFinanceTracker.Application.ImportAndExport.Export
     /// </summary>
     public interface IDataExporter
     {
-        void Export(DataSnapshot data, string path);
+        void Run(DataSnapshot data, string path);
     }
 }

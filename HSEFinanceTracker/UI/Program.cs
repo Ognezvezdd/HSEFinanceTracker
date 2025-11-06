@@ -66,12 +66,12 @@ services.AddSingleton<MainMenu>();
 using var provider = services.BuildServiceProvider();
 
 var menu = provider.GetRequiredService<MainMenu>();
-// Файл для тестирования программы. По умолчанию false TODO: заменить на false
-if (true)
+// Файл для тестирования программы. По умолчанию false 
+if (false) 
 {
     var ioFacade = provider.GetRequiredService<ImportExportFacade>();
     var importer = provider.GetRequiredService<IDataImporter>();
-    ioFacade.ImportFrom(importer, "bob.json");
+    ioFacade.ImportFrom(importer, "test_data.json");
     // Console.ReadKey();
 }
 

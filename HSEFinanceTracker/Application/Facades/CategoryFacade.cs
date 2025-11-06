@@ -30,28 +30,27 @@ namespace HSEFinanceTracker.Application.Facades
 
         public void Delete(Guid id)
         {
-            _categories.Remove(id);
-        }
-
-        public void Rename(Guid catId, string newName)
-        {
-            Create(GetCategoryType(catId), newName);
-            Delete(catId);
-        }
-
-        private CategoryType GetCategoryType(Guid id)
-        {
-            return GetCategory(id).Type;
-        }
-
-        private Category GetCategory(Guid id)
-        {
             if (_categories.Get(id) != null)
             {
-                return _categories.Get(id)!;
+                _categories.Remove(id);
+                return;
             }
 
-            throw new InvalidOperationException("Категории с таким ID нет");
+            throw new Exception("Category not found");
+        }
+
+        public Category Rename(Guid catId, string newName)
+        {
+            if (_categories.Get(catId) == null)
+            {
+                throw new Exception("Category not found");
+            }
+
+            var type = _categories.Get(catId)!.Type;
+            Delete(catId);
+            var cat = _factory.CreateCategory(catId, type, newName);
+            _categories.Add(cat);
+            return cat;
         }
     }
 }

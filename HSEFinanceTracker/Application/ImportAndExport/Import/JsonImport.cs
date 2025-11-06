@@ -149,7 +149,7 @@ namespace HSEFinanceTracker.Application.ImportAndExport.Import
                 }
             }
 
-            // ==== Создаём счета и строим карту IdFile → IdRuntime ====
+            //  Создаём счета и строим карту IdFile → IdRuntime 
 
             var accountIdMap = new Dictionary<Guid, Guid>(); // fileId -> runtimeId
 
@@ -160,7 +160,7 @@ namespace HSEFinanceTracker.Application.ImportAndExport.Import
                 accountIdMap[a.Id] = created.Id;
             }
 
-            // ==== Создаём категории и строим карту IdFile → IdRuntime ====
+            //  Создаём категории и строим карту IdFile → IdRuntime 
 
             var categoryIdMap = new Dictionary<Guid, Guid>(); // fileId -> runtimeId
 
@@ -171,7 +171,7 @@ namespace HSEFinanceTracker.Application.ImportAndExport.Import
                 categoryIdMap[c.Id] = created.Id;
             }
 
-            // ==== Создаём операции, используя Id из файла как внешние ссылки ====
+            //  Создаём операции, используя Id из файла как внешние ссылки 
 
             foreach (var o in parsed.Operations)
             {
@@ -203,7 +203,7 @@ namespace HSEFinanceTracker.Application.ImportAndExport.Import
             }
         }
 
-        // ===== Helpers =====
+        // = Helpers =
 
         private static CategoryType ParseCategoryTypeOrThrow(string type, string context)
         {

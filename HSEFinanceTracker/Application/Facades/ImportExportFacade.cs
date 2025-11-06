@@ -33,7 +33,7 @@ namespace HSEFinanceTracker.Application.Facades
                 _operations.All().ToList()
             );
 
-            exporter.Export(data, path);
+            exporter.Run(data, path);
         }
 
         /// <summary>

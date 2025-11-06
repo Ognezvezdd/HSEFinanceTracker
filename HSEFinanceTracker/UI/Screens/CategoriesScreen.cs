@@ -45,7 +45,7 @@ namespace HSEFinanceTracker.UI.Screens
 
         private void Create()
         {
-            var typeStr = _io.Choose("Тип категории", new[] { "Доход", "Расход" });
+            var typeStr = _io.Choose("Тип категории", ["Доход", "Расход"]);
             var type = typeStr == "Доход" ? CategoryType.Income : CategoryType.Expense;
             var name = _io.AskNonEmpty("Название категории:");
             var cat = _categories.Create(type, name);
@@ -54,7 +54,7 @@ namespace HSEFinanceTracker.UI.Screens
 
         private void List()
         {
-            var filter = _io.Choose("Фильтр", new[] { "Все", "Только доходы", "Только расходы" });
+            var filter = _io.Choose("Фильтр", ["Все", "Только доходы", "Только расходы"]);
             CategoryType? type = filter switch
             {
                 "Только доходы" => CategoryType.Income,
