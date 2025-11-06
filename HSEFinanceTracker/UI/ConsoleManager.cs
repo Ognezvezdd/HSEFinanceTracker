@@ -18,7 +18,8 @@ namespace HSEFinanceTracker.UI
         /// </param>
         public static void WriteWarn(string message, bool flag = true)
         {
-            AnsiConsole.Markup($"[red][bold]Ошибка[/]: {message}[/]\n");
+            var message2 = message.ToString()?.Replace("]", "").Replace("[", "").Replace("\r", "");
+            AnsiConsole.Markup($"[red][bold]Ошибка[/]: {message2}[/]\n");
             if (flag)
             {
                 Console.ReadKey();
@@ -31,7 +32,8 @@ namespace HSEFinanceTracker.UI
         /// <param name="message">Сообщение, которое будет выведено.</param>
         public static void WriteMessage(object message)
         {
-            AnsiConsole.Markup($"[green]{message.ToString()}[/]\n");
+            var message2 = message.ToString()?.Replace("]", "").Replace("[", "").Replace("\r", "");
+            AnsiConsole.Markup($"[green]{message2}[/]\n");
         }
 
         /// <summary>
@@ -41,7 +43,8 @@ namespace HSEFinanceTracker.UI
         /// <param name="color">Строка, задающая цвет (например, "blue", "yellow" и т.д.).</param>
         public static void WriteColor(object message, string color)
         {
-            AnsiConsole.Markup($"[{color}]{message}[/]\n");
+            var message2 = message.ToString()?.Replace("]", "").Replace("[", "").Replace("\r", "");
+            AnsiConsole.Markup($"[{color}]{message2}[/]\n");
         }
     }
 }

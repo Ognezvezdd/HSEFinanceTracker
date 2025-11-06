@@ -106,8 +106,7 @@ namespace HSEFinanceTracker.Application.Import
 
         protected override void Persist(ImportDto parsed)
         {
-            // TODO: можно добавить режимы merge/skip/replace.
-            // Сейчас: строго fail on conflict.
+
 
             // Снимки существующих данных (по одному разу)
             var existingAccounts = _accounts.All().ToList();
