@@ -1,6 +1,7 @@
 using HSEFinanceTracker.Application.Export;
 using HSEFinanceTracker.Application.Import;
 using HSEFinanceTracker.Base.Repositories;
+using HSEFinanceTracker.UI;
 
 namespace HSEFinanceTracker.Application.Facades
 {
@@ -47,7 +48,7 @@ namespace HSEFinanceTracker.Application.Facades
             }
             catch (Exception ex)
             {
-                // ignored
+                ConsoleManager.WriteWarn($"Ошибка импорта: {ex.Message}");
             }
         }
     }
