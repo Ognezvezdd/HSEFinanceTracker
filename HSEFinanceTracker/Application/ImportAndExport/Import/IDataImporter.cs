@@ -1,4 +1,4 @@
-namespace HSEFinanceTracker.Application.Import
+namespace HSEFinanceTracker.Application.ImportAndExport.Import
 {
     /// <summary>
     /// Контракт импортёра (CSV/JSON/YAML и т.д.).

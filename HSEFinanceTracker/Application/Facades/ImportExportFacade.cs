@@ -1,5 +1,5 @@
-using HSEFinanceTracker.Application.Export;
-using HSEFinanceTracker.Application.Import;
+using HSEFinanceTracker.Application.ImportAndExport.Export;
+using HSEFinanceTracker.Application.ImportAndExport.Import;
 using HSEFinanceTracker.Base.Repositories;
 using HSEFinanceTracker.UI;
 

@@ -1,44 +1,38 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using HSEFinanceTracker.Base.Entities;
-using HSEFinanceTracker.Base.Factories;
 using HSEFinanceTracker.Application.Facades;
 using HSEFinanceTracker.Base;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace HSEFinanceTracker.Application.Import
+namespace HSEFinanceTracker.Application.ImportAndExport.Import
 {
     /// <summary>
     /// Импорт JSON-файла.
-    /// Политика конфликтов: минимально — fail on conflict.
     /// Создание доменных сущностей — через фасады.
     /// Id из файла используются как внешние ссылки (карта IdFile→IdRuntime).
     /// </summary>
-    public sealed class JsonImport : FileImportTemplate<JsonImport.ImportDto>
+    public sealed class JsonImport : FileImportTemplate<ImportExportDto>
     {
-        private readonly IFinanceFactory _factory;
         private readonly BankAccountFacade _accounts;
         private readonly CategoryFacade _categories;
         private readonly OperationFacade _operations;
 
         public JsonImport(
-            IFinanceFactory factory,
             BankAccountFacade accounts,
             CategoryFacade categories,
             OperationFacade operations)
         {
-            _factory = factory;
             _accounts = accounts;
             _categories = categories;
             _operations = operations;
         }
 
-        protected override ImportDto Parse(string raw)
+        protected override ImportExportDto Parse(string raw)
         {
             var opts = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true, Converters = { new JsonStringEnumConverter() }
             };
-            var dto = JsonSerializer.Deserialize<ImportDto>(raw, opts);
+            var dto = JsonSerializer.Deserialize<ImportExportDto>(raw, opts);
             if (dto is null)
             {
                 throw new InvalidDataException("Не удалось разобрать JSON");
@@ -47,7 +41,7 @@ namespace HSEFinanceTracker.Application.Import
             return dto;
         }
 
-        protected override void Validate(ImportDto parsed)
+        protected override void Validate(ImportExportDto parsed)
         {
             // Дубли Id в Accounts
             var duplAcc = parsed.Accounts
@@ -83,12 +77,12 @@ namespace HSEFinanceTracker.Application.Import
 
             foreach (var c in parsed.Categories)
             {
-                ParseCategoryTypeOrThrow(c.Type.ToString(), $"Category Id={c.Id}, Name='{c.Name}'");
+                ParseCategoryTypeOrThrow(c.Type, $"Category Id={c.Id}, Name='{c.Name}'");
             }
 
             foreach (var o in parsed.Operations)
             {
-                ParseOperationTypeOrThrow(o.Type.ToString(), $"Operation Id={o.Id}");
+                ParseOperationTypeOrThrow(o.Type, $"Operation Id={o.Id}");
 
                 if (!accountIds.Contains(o.BankAccountId))
                 {
@@ -104,10 +98,8 @@ namespace HSEFinanceTracker.Application.Import
             }
         }
 
-        protected override void Persist(ImportDto parsed)
+        protected override void Persist(ImportExportDto parsed)
         {
-
-
             // Снимки существующих данных (по одному разу)
             var existingAccounts = _accounts.All().ToList();
             var existingCategories = _categories.All().ToList();
@@ -138,7 +130,7 @@ namespace HSEFinanceTracker.Application.Import
                 .ToDictionary(c => c.Id, c => c);
             foreach (var c in parsed.Categories)
             {
-                var type = ParseCategoryTypeOrThrow(c.Type.ToString(), $"Category Id={c.Id}, Name='{c.Name}'");
+                var type = ParseCategoryTypeOrThrow(c.Type, $"Category Id={c.Id}, Name='{c.Name}'");
 
                 if (existingCatById.ContainsKey(c.Id))
                 {
@@ -174,7 +166,7 @@ namespace HSEFinanceTracker.Application.Import
 
             foreach (var c in parsed.Categories)
             {
-                var type = ParseCategoryTypeOrThrow(c.Type.ToString(), $"Category Id={c.Id}, Name='{c.Name}'");
+                var type = ParseCategoryTypeOrThrow(c.Type, $"Category Id={c.Id}, Name='{c.Name}'");
                 var created = _categories.Create(type, c.Name);
                 categoryIdMap[c.Id] = created.Id;
             }
@@ -183,7 +175,7 @@ namespace HSEFinanceTracker.Application.Import
 
             foreach (var o in parsed.Operations)
             {
-                var type = ParseOperationTypeOrThrow(o.Type.ToString(), $"Operation Id={o.Id}");
+                var type = ParseOperationTypeOrThrow(o.Type, $"Operation Id={o.Id}");
 
                 if (!accountIdMap.TryGetValue(o.BankAccountId, out var runtimeAccId))
                 {
@@ -243,16 +235,6 @@ namespace HSEFinanceTracker.Application.Import
 
             throw new InvalidDataException(
                 $"Некорректный тип операции '{type}' для {context}. Ожидается 'Income' или 'Expense'.");
-        }
-
-        // ===== DTO =====
-
-        // TODO Проверитб что нет конфликтов
-        public sealed class ImportDto
-        {
-            public List<BankAccount> Accounts { get; init; } = [];
-            public List<Category> Categories { get; init; } = [];
-            public List<Operation> Operations { get; init; } = [];
         }
     }
 }

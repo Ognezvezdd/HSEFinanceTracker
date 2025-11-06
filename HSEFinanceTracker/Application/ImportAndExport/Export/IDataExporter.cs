@@ -1,6 +1,6 @@
 using HSEFinanceTracker.Application.Facades;
 
-namespace HSEFinanceTracker.Application.Export
+namespace HSEFinanceTracker.Application.ImportAndExport.Export
 {
     /// <summary>
     /// Контракт экспортёра (можно сделать ещё CsvExport, YamlExport).

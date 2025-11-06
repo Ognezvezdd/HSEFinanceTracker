@@ -1,4 +1,4 @@
-namespace HSEFinanceTracker.Application.Import
+namespace HSEFinanceTracker.Application.ImportAndExport.Import
 {
     /// <summary>
     /// Шаблонный метод для импорта: ReadFile -> Parse -> Validate -> Persist.
