@@ -20,7 +20,7 @@ namespace HSEFinanceTracker.Application.Facades
             _factory = factory;
         }
 
-        public Operation Create(OperationType type, Guid accountId, Guid categoryId,
+        public void Create(OperationType type, Guid accountId, Guid categoryId,
             decimal amount, DateTime date, string? description = null)
         {
             var account = _accounts.Get(accountId) ?? throw new InvalidOperationException("Account not found");
@@ -38,13 +38,6 @@ namespace HSEFinanceTracker.Application.Facades
             var delta = type == OperationType.Income ? amount : -amount;
             account.Apply(delta);
             _accounts.Update(account);
-
-            return op;
-        }
-
-        public IEnumerable<Operation> All()
-        {
-            return _operations.All();
         }
 
         public IEnumerable<Operation> ForAccount(Guid accountId, DateTime? from = null, DateTime? to = null)
