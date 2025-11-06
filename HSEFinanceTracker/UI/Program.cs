@@ -72,7 +72,7 @@ if (true)
     var ioFacade = provider.GetRequiredService<ImportExportFacade>();
     var importer = provider.GetRequiredService<IDataImporter>();
     ioFacade.ImportFrom(importer, "bob.json");
-    Console.ReadKey();
+    // Console.ReadKey();
 }
 
 menu.Run();

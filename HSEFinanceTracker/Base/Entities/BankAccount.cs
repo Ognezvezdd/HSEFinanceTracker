@@ -6,7 +6,7 @@ namespace HSEFinanceTracker.Base.Entities
         public string Name { get; private set; }
         public decimal Balance { get; private set; }
 
-        public BankAccount(Guid id, string name, decimal balance = 0m)
+        internal BankAccount(Guid id, string name, decimal balance = 0m)
         {
             Id = id;
             Name = name.Trim();

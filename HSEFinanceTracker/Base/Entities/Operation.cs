@@ -10,14 +10,9 @@ namespace HSEFinanceTracker.Base.Entities
         public DateTime Date { get; }
         public string? Description { get; }
 
-        public Operation(Guid id, OperationType type, Guid bankAccountId, Guid categoryId,
+        internal Operation(Guid id, OperationType type, Guid bankAccountId, Guid categoryId,
             decimal amount, DateTime date, string? description = null)
         {
-            if (amount <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be > 0");
-            }
-
             Id = id;
             Type = type;
             BankAccountId = bankAccountId;

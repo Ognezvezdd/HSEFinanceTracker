@@ -6,7 +6,7 @@ namespace HSEFinanceTracker.Base.Entities
         public CategoryType Type { get; }
         public string Name { get; }
 
-        public Category(Guid id, CategoryType type, string name)
+        internal Category(Guid id, CategoryType type, string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {

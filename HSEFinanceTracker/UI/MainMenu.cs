@@ -1,20 +1,21 @@
+using HSEFinanceTracker.Application.Commands;
 using HSEFinanceTracker.UI.Services;
 using HSEFinanceTracker.UI.Screens;
 
 namespace HSEFinanceTracker.UI
 {
     /// <summary>
-    /// Корневое меню: только маршрутизация между экранами.
+    /// Корневое меню. Реализовано через паттерн Команда + Декоратор (таймер).
+    /// Каждый пункт верхнего меню — это команда, обёрнутая в TimedMenuCommand.
     /// </summary>
     public sealed class MainMenu
     {
         private readonly UiIo _io;
-        private readonly AccountsScreen _accounts;
-        private readonly CategoriesScreen _categories;
-        private readonly OperationsScreen _operations;
-        private readonly ReportsScreen _reports;
-        private readonly ImportExportScreen _importExport;
-        private readonly DataToolsScreen _dataTools;
+
+        private string _pendingInfo = "";
+
+        // Готовые команды верхнего уровня
+        private readonly List<ICommand> _commands = [];
 
         public MainMenu(
             UiIo io,
@@ -26,12 +27,12 @@ namespace HSEFinanceTracker.UI
             DataToolsScreen dataTools)
         {
             _io = io;
-            _accounts = accounts;
-            _categories = categories;
-            _operations = operations;
-            _reports = reports;
-            _importExport = importExport;
-            _dataTools = dataTools;
+            _commands.Add(Timed(new ScreenCommand(accounts.Title, accounts.Show, _io)));
+            _commands.Add(Timed(new ScreenCommand(categories.Title, categories.Show, _io)));
+            _commands.Add(Timed(new ScreenCommand(operations.Title, operations.Show, _io)));
+            _commands.Add(Timed(new ScreenCommand(reports.Title, reports.Show, _io)));
+            _commands.Add(Timed(new ScreenCommand(importExport.Title, importExport.Show, _io)));
+            _commands.Add(Timed(new ScreenCommand(dataTools.Title, dataTools.Show, _io)));
         }
 
         public void Run()
@@ -41,48 +42,41 @@ namespace HSEFinanceTracker.UI
                 try
                 {
                     _io.Clear();
-                    var choice = _io.Choose("HSE Банк",
-                    [
-                        _accounts.Title, _categories.Title, _operations.Title, _reports.Title, _importExport.Title,
-                        _dataTools.Title, "Выход"
-                    ]);
+                    var choices = _commands.Select(c => c.Name).Concat(["Выход"]).ToArray();
 
+                    // Сценарий Timer (Декоратор + Команда) 
+                    if (!string.IsNullOrEmpty(_pendingInfo))
+                    {
+                        ConsoleManager.WriteColor(_pendingInfo, "gray");
+                    }
+
+                    var choice = _io.Choose("HSE Банк", choices);
                     if (choice == "Выход")
                     {
                         ConsoleManager.WriteColor("Выход из приложения...", "yellow");
                         return;
                     }
 
-                    if (choice == _accounts.Title)
+                    var cmd = _commands.FirstOrDefault(c => c.Name == choice);
+                    if (cmd is null)
                     {
-                        _accounts.Show();
+                        _io.Warn("Неизвестная команда");
+                        continue;
                     }
-                    else if (choice == _categories.Title)
-                    {
-                        _categories.Show();
-                    }
-                    else if (choice == _operations.Title)
-                    {
-                        _operations.Show();
-                    }
-                    else if (choice == _reports.Title)
-                    {
-                        _reports.Show();
-                    }
-                    else if (choice == _importExport.Title)
-                    {
-                        _importExport.Show();
-                    }
-                    else if (choice == _dataTools.Title)
-                    {
-                        _dataTools.Show();
-                    }
+
+
+                    cmd.Execute(); // здесь сработает декоратор-таймер
                 }
                 catch (Exception ex)
                 {
-                    ConsoleManager.WriteWarn($"Произошла ошибка {ex}");
+                    ConsoleManager.WriteWarn($"Произошла ошибка: {ex.Message}");
                 }
             }
+        }
+
+        private ICommand Timed(ICommand inner)
+        {
+            return new TimedMenuCommand(inner, msg => _pendingInfo = msg);
         }
     }
 }

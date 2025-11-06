@@ -10,15 +10,33 @@ namespace HSEFinanceTracker.Base.Factories
             return new BankAccount(Guid.NewGuid(), name, openingBalance);
         }
 
+        public BankAccount CreateBankAccount(Guid id, string name, decimal openingBalance = 0m)
+        {
+            return new BankAccount(id, name, openingBalance);
+        }
+
+
         public Category CreateCategory(CategoryType type, string name)
         {
             return new Category(Guid.NewGuid(), type, name);
         }
 
+        public Category CreateCategory(Guid id, CategoryType type, string name)
+        {
+            return new Category(id, type, name);
+        }
+
+
         public Operation CreateOperation(OperationType type, Guid accountId, Guid categoryId,
             decimal amount, DateTime date, string? description = null)
         {
             return new Operation(Guid.NewGuid(), type, accountId, categoryId, amount, date, description);
+        }
+
+        public Operation CreateOperation(Guid operationId, OperationType type, Guid accountId, Guid categoryId,
+            decimal amount, DateTime date, string? description = null)
+        {
+            return new Operation(operationId, type, accountId, categoryId, amount, date, description);
         }
     }
 }
