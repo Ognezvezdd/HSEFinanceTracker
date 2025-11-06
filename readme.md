@@ -16,28 +16,49 @@
 
 ## Структура проекта (смысловые модули)
 
-- Base/
-    - Entities/ => доменные сущности: BankAccount, Category, Operation (инварианты внутри сущностей)
-    - Factories/ => фабрика доменных объектов: IFinanceFactory, FinanceFactory
-    - Repositories/ => интерфейсы репозиториев: IBankAccountRepo, ICategoryRepo, IOperationRepo
-- Infrastructure/
-    - Repositories/ => реализации хранилищ: InMemoryBankAccountRepo, InMemoryCategoryRepo, InMemoryOperationRepo
-    - (при подключении БД: Db*Repo и Proxy-кэш поверх них)
 - Application/
-    - Facades/ => фасады сценариев: BankAccountFacade, CategoryFacade, OperationFacade, AnalyticsFacade,
-      ImportExportFacade, RecalcFacade
-    - Commands/ => ICommand, ScreenCommand (обёртка над экраном), TimedMenuCommand (декоратор-таймер)
+    - Commands/
+        - `ICommand.cs` — контракт команды верхнего уровня.
+        - `ScreenCommand.cs` — адаптер «экран → команда».
+        - `TimedMenuCommand.cs` — декоратор для измерения времени выполнения команды.
+    - Facades/
+        - `BankAccountFacade.cs`, `CategoryFacade.cs`, `OperationFacade.cs` — фасады CRUD над доменом.
+        - `AnalyticsFacade.cs` — фасад аналитики (разница доходы-расходы, группировка по категориям).
+        - `ImportExportFacade.cs` — единая точка импорта/экспорта.
+        - `RecalcFacade.cs` — пересчёт и верификация балансов счетов по операциям.
     - ImportAndExport/
-        - Template/ => FileImportTemplate<T> (Шаблонный метод для импорта)
-        - Import/ => JsonImport (импорт JSON через фасады + фабрику)
-        - Export/ => JsonExport (экспорт JSON; поддержка визитёра для обхода снимка)
-        - Visitor/ => IDataExportVisitor (+ конкретные визитёры при необходимости)
+        - Export/
+            - `IDataExporter.cs` — стратегия/контракт экспортёра.
+            - `FileExportTemplate.cs` — базовый шаблон экспорта в файл (Template Method).
+            - `JsonExport.cs` — конкретный экспортёр JSON (использует DTO-снимок).
+        - Import/
+            - `IDataImporter.cs` — стратегия/контракт импортёра.
+            - `FileImportTemplate.cs` — базовый шаблон импорта из файла (Template Method).
+            - `JsonImport.cs` — импорт JSON (валидация + создание через фасады/фабрику).
+            - `ImportExportDto.cs` — переносимые DTO (accounts/categories/operations).
+- Base/
+    - Entities/
+        - `BankAccount.cs`, `Category.cs`, `Operation.cs` — доменные сущности и инварианты.
+    - Factories/
+        - `IFinanceFactory.cs`, `FinanceFactory.cs` — фабрика доменных объектов (валидации при создании).
+    - Repositories/
+        - `IBankAccountRepo.cs`, `ICategoryRepo.cs`, `IOperationRepo.cs` — контракты репозиториев.
+    - `Enums.cs` — перечисления домена.
+- Infrastructure/
+    - Repositories/
+        - `InMemoryBankAccountRepo.cs`, `InMemoryCategoryRepo.cs`, `InMemoryOperationRepo.cs` — простые in-memory реализации.
+        - (при подключении БД сюда добавляется `Db*Repo` и Proxy-кэш поверх них)
 - UI/
-    - Services/ => UiIo (удобный I/O), ConsoleManager (цветной вывод)
-    - Screens/ => тонкие экраны (меню): AccountsScreen, CategoriesScreen, OperationsScreen, ReportsScreen,
-      ImportExportScreen, DataToolsScreen
-    - MainMenu => корневое меню: сборка команд верхнего уровня, обёрнутых таймером
-- Program.cs => DI-композиция, запуск
+    - Abstractions/
+        - `IMenuScreen.cs` — контракт «экрана» (меню).
+    - Screens/
+        - `AccountsScreen.cs`, `CategoriesScreen.cs`, `OperationsScreen.cs`,
+          `ReportsScreen.cs`, `ImportExportScreen.cs`, `DataToolsScreen.cs` — тонкие оболочки над фасадами.
+    - Services/
+        - `Uilo.cs` (класс `UiIo`) — удобный ввод/вывод (вопросы, таблицы, подтверждения).
+        - `ConsoleManager.cs` — цветной вывод с помощью Spectre.Console.
+    - `MainMenu.cs` — корневое меню: собирает команды и оборачивает их в таймер-декоратор.
+- `Program.cs` — DI-композиция и запуск.
 
 ---
 
@@ -88,11 +109,11 @@
 
 2) Команда (Command)
 
-- Где: ScreenCommand (каждый пункт верхнего меню — это команда: Name + Execute).
+- Где: ScreenCommand (каждый пункт верхнего меню - это команда: Name + Execute).
 - Зачем: представить сценарий как объект. Это упростило декорирование (таймер), логирование и возможный реентерабельный
   запуск.
 
-3) Декоратор (Decorator) — таймер сценариев
+3) Декоратор (Decorator) - таймер сценариев
 
 - Где: TimedMenuCommand оборачивает любую ICommand и замеряет длительность.
 - Зачем: единообразный сбор метрик без правок команд/экранов.
@@ -113,7 +134,7 @@
 
 - Где: IFinanceFactory, FinanceFactory.
 - Зачем: централизованное создание сущностей + инварианты (amount > 0, имя не пустое и т.д.). Никаких new в
-  фасадах/экранах — только фабрика.
+  фасадах/экранах - только фабрика.
 
 7) Прокси (Proxy)
 
@@ -123,7 +144,7 @@
 
 8) Стратегия (Strategy)
 
-- Где: IDataExporter/IDataImporter — семейства алгоритмов экспорта/импорта (сейчас JSON).
+- Где: IDataExporter/IDataImporter - семейства алгоритмов экспорта/импорта (сейчас JSON).
 - Зачем: единый интерфейс + DI-выбор конкретной реализации без условных блоков в коде.
 
 ---
