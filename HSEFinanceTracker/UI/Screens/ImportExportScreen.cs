@@ -23,8 +23,13 @@ namespace HSEFinanceTracker.UI.Screens
                 io.Clear();
                 var cmd = io.Choose(Title,
                 [
-                    "Экспорт: JSON", "Экспорт: CSV", "Экспорт: YAML", "Импорт: JSON", "Импорт: CSV",
-                    "Импорт: YAML", "Назад"
+                    "Экспорт: JSON",
+                    // "Экспорт: CSV",
+                    // "Экспорт: YAML",
+                    "Импорт: JSON",
+                    // "Импорт: CSV",
+                    // "Импорт: YAML",
+                    "Назад"
                 ]);
                 if (cmd == "Назад")
                 {
