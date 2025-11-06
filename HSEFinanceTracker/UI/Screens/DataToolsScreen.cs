@@ -4,81 +4,60 @@ using HSEFinanceTracker.UI.Services;
 
 namespace HSEFinanceTracker.UI.Screens
 {
-    // Для независимости от конкретного класса пересчёта допускаем object? + dynamic
-    public sealed class DataToolsScreen : IMenuScreen
+    public sealed class DataToolsScreen(BankAccountFacade accounts, UiIo io, RecalcFacade recalc) : IMenuScreen
     {
         public string Title => "Инструменты данных";
-
-        private readonly object? _recalcFacade; // RecalcFacade (если зарегистрирован)
-        private readonly BankAccountFacade _accounts;
-        private readonly UiIo _io;
-
-        public DataToolsScreen(BankAccountFacade accounts, UiIo io, object? recalcFacade = null)
-        {
-            _accounts = accounts;
-            _io = io;
-            _recalcFacade = recalcFacade;
-        }
 
         public void Show()
         {
             while (true)
             {
-                _io.Clear();
-                var cmd = _io.Choose(Title,
+                io.Clear();
+                var cmd = io.Choose(Title,
                     ["Проверить баланс счёта", "Пересчитать баланс счёта", "Пересчитать все счета", "Назад"]);
                 if (cmd == "Назад")
                 {
                     return;
                 }
 
-
-                if (_recalcFacade == null)
-                {
-                    _io.Warn("Модуль пересчёта не подключён.");
-                    return;
-                }
-
-                dynamic r = _recalcFacade;
-
                 switch (cmd)
                 {
                     case "Проверить баланс счёта":
                         if (PickAccount() is { } acc1)
                         {
-                            decimal diff = r.VerifyAccount(acc1.Id);
-                            _io.Info($"Расхождение: {diff:0.##}");
+                            var diff = recalc.VerifyAccount(acc1.Id);
+                            io.Info($"Расхождение: {diff:0.##}");
                         }
 
                         break;
                     case "Пересчитать баланс счёта":
                         if (PickAccount() is { } acc2)
                         {
-                            r.RecalculateAccount(acc2.Id);
-                            _io.Info("Готово");
+                            recalc.RecalculateAccount(acc2.Id);
+                            io.Info("Готово");
                         }
 
                         break;
                     case "Пересчитать все счета":
-                        r.RecalculateAll();
-                        _io.Info("Готово");
+                        recalc.RecalculateAll();
+                        io.Info("Готово");
                         break;
                 }
 
-                _io.ReadKey();
+                io.ReadKey();
             }
         }
 
         private Base.Entities.BankAccount? PickAccount()
         {
-            var list = _accounts.All().ToList();
+            var list = accounts.All().ToList();
             if (!list.Any())
             {
-                _io.Warn("Счетов нет");
+                io.Warn("Счетов нет");
                 return null;
             }
 
-            var choice = _io.Choose("Выберите счёт", list.Select(a => $"{a.Name} | {a.Balance:0.##} | {a.Id}"));
+            var choice = io.Choose("Выберите счёт", list.Select(a => $"{a.Name} | {a.Balance:0.##} | {a.Id}"));
             var id = choice.Split('|').Last().Trim();
             return list.First(a => a.Id.ToString() == id);
         }

@@ -41,7 +41,14 @@ namespace HSEFinanceTracker.Application.Facades
         /// </summary>
         public void ImportFrom(IDataImporter importer, string path)
         {
-            importer.Run(path);
+            try
+            {
+                importer.Run(path);
+            }
+            catch (Exception ex)
+            {
+                // ignored
+            }
         }
     }
 

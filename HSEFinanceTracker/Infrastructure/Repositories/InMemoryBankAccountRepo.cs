@@ -14,7 +14,7 @@ namespace HSEFinanceTracker.Infrastructure.Repositories
 
         public BankAccount? Get(Guid id)
         {
-            return _data.TryGetValue(id, out var a) ? a : null;
+            return _data.GetValueOrDefault(id);
         }
 
         public IEnumerable<BankAccount> All()

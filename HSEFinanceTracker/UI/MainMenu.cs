@@ -1,4 +1,3 @@
-using HSEFinanceTracker.UI.Abstractions;
 using HSEFinanceTracker.UI.Services;
 using HSEFinanceTracker.UI.Screens;
 
@@ -39,42 +38,49 @@ namespace HSEFinanceTracker.UI
         {
             while (true)
             {
-                _io.Clear();
-                var choice = _io.Choose("Главное меню",
-                [
-                    _accounts.Title, _categories.Title, _operations.Title, _reports.Title, _importExport.Title,
-                    _dataTools.Title, "Выход"
-                ]);
+                try
+                {
+                    _io.Clear();
+                    var choice = _io.Choose("HSE Банк",
+                    [
+                        _accounts.Title, _categories.Title, _operations.Title, _reports.Title, _importExport.Title,
+                        _dataTools.Title, "Выход"
+                    ]);
 
-                if (choice == "Выход")
-                {
-                    ConsoleManager.WriteColor("Выход из приложения...", "yellow");
-                    return;
-                }
+                    if (choice == "Выход")
+                    {
+                        ConsoleManager.WriteColor("Выход из приложения...", "yellow");
+                        return;
+                    }
 
-                if (choice == _accounts.Title)
-                {
-                    _accounts.Show();
+                    if (choice == _accounts.Title)
+                    {
+                        _accounts.Show();
+                    }
+                    else if (choice == _categories.Title)
+                    {
+                        _categories.Show();
+                    }
+                    else if (choice == _operations.Title)
+                    {
+                        _operations.Show();
+                    }
+                    else if (choice == _reports.Title)
+                    {
+                        _reports.Show();
+                    }
+                    else if (choice == _importExport.Title)
+                    {
+                        _importExport.Show();
+                    }
+                    else if (choice == _dataTools.Title)
+                    {
+                        _dataTools.Show();
+                    }
                 }
-                else if (choice == _categories.Title)
+                catch (Exception ex)
                 {
-                    _categories.Show();
-                }
-                else if (choice == _operations.Title)
-                {
-                    _operations.Show();
-                }
-                else if (choice == _reports.Title)
-                {
-                    _reports.Show();
-                }
-                else if (choice == _importExport.Title)
-                {
-                    _importExport.Show();
-                }
-                else if (choice == _dataTools.Title)
-                {
-                    _dataTools.Show();
+                    ConsoleManager.WriteWarn($"Произошла ошибка {ex}");
                 }
             }
         }

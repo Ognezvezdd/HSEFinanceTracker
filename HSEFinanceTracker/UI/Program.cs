@@ -31,6 +31,7 @@ services.AddSingleton<CategoryFacade>();
 services.AddSingleton<OperationFacade>();
 services.AddSingleton<AnalyticsFacade>();
 services.AddSingleton<ImportExportFacade>();
+services.AddSingleton<RecalcFacade>();
 
 // ============================
 // 4) Import / Export (Template Method + Visitor)
